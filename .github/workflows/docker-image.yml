@@ -4,6 +4,9 @@ on: [push, pull_request, workflow_dispatch]
 jobs:
   build:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        config: [ "--config=clang12_config --config=asan", "--config=clang12_config --config=tsan", "--config=asan", "--config=tsan", "" ]
     steps:
       - uses: actions/checkout@v4
       - name: Build the Docker Image
@@ -12,7 +15,7 @@ jobs:
         run: docker run -d --name my-container -v $PWD/tinyxml2:/work test-env:latest
       - name: Run Test Config Inside Docker Container
         id: runTest
-        run: docker exec my-container bazel test --config=clang12_config --config=asan //:xmltest
+        run: docker exec my-container bazel test ${{ matrix.config }} //:xmltest
         continue-on-error: true
       - name: Show Test Output
         run: docker exec my-container cat /work/bazel-testlogs/xmltest/test.xml
@@ -21,10 +24,10 @@ jobs:
       - name: Show Test Output
         run: cat test.xml
       - name: Upload Logs as Artifact
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: build-logs
-          path: /work/bazel-testlogs/xmltest/test.xml
+          path: test.xml
       - name: Stop and Remove Docker Container
         run: docker stop my-container && docker rm my-container
       - name: Check Bazel Test For Errors
