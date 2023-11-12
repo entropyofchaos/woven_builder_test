@@ -6,17 +6,15 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Build the Docker image
+      - name: Build the Docker Image
         run: docker build . --file Dockerfile_GithubActions --tag test-env:latest
-      - name: Check Docker Image
-        run: docker images
       - name: Start Docker Container
         run: docker run -d --name my-container -v $PWD/tinyxml2:/work test-env:latest
-      - name: Check Docker Container Logs
-        run: docker logs my-container
-      - name: Run Test Config Inside Docker
+      - name: Run Test Config Inside Docker Container
         run: docker exec my-container bazel test --config=clang12_config --config=asan //:xmltest
+        continue-on-error: true
       - name: Show Test Output
+        id: runTest
         run: docker exec my-container cat /work/bazel-testlogs/xmltest_memleak/test.log
       - name: Copy Test Logs from Docker Container
         run: docker cp my-container:/work/bazel-testlogs/xmltest_memleak/test.log $GITHUB_WORKSPACE/test.xml
@@ -29,6 +27,6 @@ jobs:
           path: /work/bazel-testlogs/xmltest_memleak/test.xml
       - name: Stop and Remove Docker Container
         run: docker stop my-container && docker rm my-container
-      - name: Check Bazel Test Exit Code
-        run: exit ${{ job.status }}
-        if: ${{ job.status != 'success' }}
+      - name: Check Bazel Test For Errors
+        if: steps.runTest != 'success'
+        run: exit 1
