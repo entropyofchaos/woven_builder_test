@@ -38,7 +38,7 @@ jobs:
         run: |
             pwd
             cd tinyxml2
-            bazel build //:xmltest
+            bazel build --compilation_mode=dbg --copt=-g --config=asan //:xmltest
             echo cd bazel-bin/xmltest.runfiles/__main__/
             cd bazel-bin/xmltest.runfiles/__main__/
             echo ./xmltest
