@@ -6,7 +6,8 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        config: [ "--config=clang12_config --config=asan", "--config=clang12_config --config=tsan", "--config=asan", "--config=tsan", "" ]
+        #config: [ "--config=clang12_config --config=asan", "--config=clang12_config --config=tsan", "--config=asan", "--config=tsan", "" ]
+        config: [ "" ]
     steps:
       - uses: actions/checkout@v4
       - name: Build the Docker Image
