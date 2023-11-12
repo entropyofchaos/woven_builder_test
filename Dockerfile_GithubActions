@@ -1,4 +1,4 @@
-FROM ubuntu:23.10
+FROM ubuntu:20.04
 
 # Set DEBIAN_FRONTEND to noninteractive to avoid debconf warnings
 ENV DEBIAN_FRONTEND=noninteractive
