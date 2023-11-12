@@ -1,0 +1,52 @@
+name: Docker Image CI
+on: [workflow_dispatch]
+
+jobs:
+  build:
+    runs-on: ubuntu-20.04
+    strategy:
+      matrix:
+        #config: [ "--config=clang12_config --config=asan", "--config=clang12_config --config=tsan", "--config=asan", "--config=tsan", "" ]
+        config: [ "--config=clang12_config" ]
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install essential tools and Bazel
+        run: |
+            sudo apt-get update
+            sudo apt-get install -y \
+                apt-utils \
+                build-essential \
+                git \
+                gcc \
+                mingw-w64 \
+                clang-12 \
+                libc++-12-dev \
+                libc++abi-12-dev \
+                libunwind-dev \
+                apt-transport-https \
+                curl \
+                gnupg
+            
+            curl -fsSL https://bazel.build/bazel-release.pub.gpg | gpg --dearmor >bazel-archive-keyring.gpg
+            sudo mv bazel-archive-keyring.gpg /usr/share/keyrings
+            echo "deb [arch=amd64 signed-by=/usr/share/keyrings/bazel-archive-keyring.gpg] https://storage.googleapis.com/bazel-apt stable jdk1.8" | sudo tee /etc/apt/sources.list.d/bazel.list
+            
+            sudo apt-get update
+            sudo apt-get install -y bazel
+            cd tinyxml2
+      - name: Run Test
+        id: runTest
+        run: bazel test ${{ matrix.config }} //:xmltest
+        continue-on-error: true
+      - name: Show Test Output
+        run: cat bazel-testlogs/xmltest/test.log
+      - name: Show Test Output
+        run: cat bazel-testlogs/xmltest/test.xml
+      - name: Upload Logs as Artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: build-logs
+          path: bazel-testlogs/xmltest/test.xml
+      - name: Check Bazel Test For Errors
+        if: steps.runTest != 'success'
+        run: exit 1
