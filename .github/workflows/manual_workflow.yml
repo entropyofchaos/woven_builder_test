@@ -1,5 +1,5 @@
 name: Docker Image CI
-on: [workflow_dispatch]
+on: [push, workflow_dispatch]
 
 jobs:
   build:
@@ -33,15 +33,17 @@ jobs:
             
             sudo apt-get update
             sudo apt-get install -y bazel
-            cd tinyxml2
       - name: Run Test
         id: runTest
-        run: bazel test ${{ matrix.config }} //:xmltest
+        run: |
+            pwd
+            cd tinyxml2
+            bazel test ${{ matrix.config }} //:xmltest
         continue-on-error: true
       - name: Show Test Output
-        run: cat bazel-testlogs/xmltest/test.log
+        run: cat tinyxml2/bazel-testlogs/xmltest/test.log
       - name: Show Test Output
-        run: cat bazel-testlogs/xmltest/test.xml
+        run: cat tinyxml2/bazel-testlogs/xmltest/test.xml
       - name: Upload Logs as Artifact
         uses: actions/upload-artifact@v3
         with:
