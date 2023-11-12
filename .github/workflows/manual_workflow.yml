@@ -38,7 +38,11 @@ jobs:
         run: |
             pwd
             cd tinyxml2
-            bazel test ${{ matrix.config }} //:xmltest
+            bazel build //:xmltest
+            echo cd bazel-bin/xmltest.runfiles/__main__/
+            cd bazel-bin/xmltest.runfiles/__main__/
+            echo ./xmltest
+            ./xmltest
         continue-on-error: true
       - name: Show Test Output
         run: |
