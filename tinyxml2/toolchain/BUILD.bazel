@@ -1,0 +1,70 @@
+# //toolchain:BUILD.bazel
+
+# Pull in the Clang-12 toolchain configuration
+load(":clang12_cc_toolchain_config.bzl", "clang12_cc_toolchain_config")
+# Pull in the mingw Windows cross compiler toolchain configuration
+load(":mingw_cc_toolchain_config.bzl", "mingw_cc_toolchain_config")
+
+filegroup(name = "empty")
+
+########################
+## clang-12 toolchain ##
+########################
+
+clang12_cc_toolchain_config(name = "clang12_toolchain_config")
+
+# This represents a single C++ toolchain. For this example,
+# a Clang-12 toolchain
+cc_toolchain(
+    name = "clang12_k8_toolchain",
+    toolchain_identifier = "clang12-toolchain",
+    toolchain_config = ":clang12_toolchain_config",
+    all_files = ":empty",
+    compiler_files = ":empty",
+    dwp_files = ":empty",
+    linker_files = ":empty",
+    objcopy_files = ":empty",
+    strip_files = ":empty",
+    supports_param_files = 0,
+)
+
+# Represents a collections of C++ toolchains. For this example we are 
+# only mapping one CPU type k8 (x86_64) to our Clang-12 compiler. 
+# But multiple cpu types could be defined.
+cc_toolchain_suite(
+    name = "clang12_suite",
+    toolchains = {
+        "k8": ":clang12_k8_toolchain",
+    },
+)
+
+######################
+## mingw  toolchain ##
+######################
+
+mingw_cc_toolchain_config(name = "mingw_cc_toolchain_config")
+
+# This represents a single C++ toolchain. For this example,
+# a mingw Windows cross compiler toolchain
+cc_toolchain(
+    name = "mingw_k8_toolchain",
+    toolchain_identifier = "mingw-toolchain",
+    toolchain_config = ":mingw_cc_toolchain_config",
+    all_files = ":empty",
+    compiler_files = ":empty",
+    dwp_files = ":empty",
+    linker_files = ":empty",
+    objcopy_files = ":empty",
+    strip_files = ":empty",
+    supports_param_files = 0,
+)
+
+# Represents a collections of C++ toolchains. For this example we are 
+# only mapping one CPU type k8 (x86_64) to our mingw Windows cross compiler. 
+# But multiple cpu types could be defined.
+cc_toolchain_suite(
+    name = "mingw_suite",
+    toolchains = {
+        "k8": ":mingw_k8_toolchain",
+    },
+)

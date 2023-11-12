@@ -1,0 +1,32 @@
+# For an entry build:{config_name} --flag=value, the command line flag --config={config_name} is associated with that particular flag
+
+# Use our custom-configured clang12 c++ toolchain.
+build:clang12_config --crosstool_top=//toolchain:clang12_suite
+# Use --cpu as a differentiator for the clang-12 toolchain.
+build:clang12_config --cpu=k8
+# Use the default Bazel C++ toolchain to build the tools used during the
+# build.
+build:clang12_config --host_crosstool_top=@bazel_tools//tools/cpp:toolchain
+
+
+# Use our custom-configured mingw c++ toolchain for Windows execution.
+build:mingw_config --crosstool_top=//toolchain:mingw_suite
+
+# Use --cpu as a differentiator for the mingw toolchain.
+build:mingw_config --cpu=k8
+
+# Use the default Bazel C++ toolchain to build the tools used during the
+# build.
+build:mingw_config --host_crosstool_top=@bazel_tools//tools/cpp:toolchain
+
+# Build configuration for thread sanitizer (tsan). This will put set the compiler to generate debug symbols while still compiling as release. This will then allow tsan to run on a relased build and provide feedback of problems. 
+build:tsan --copt=-fsanitize=thread --copt=-g --strip=never
+build:tsan --linkopt=-fsanitize=thread
+build:tsan --platform_suffix=-tsan
+build:tsan --test_env TSAN_OPTIONS=:detect_deadlocks=1:second_deadlock_stack=1
+
+# Build configuration for address sanitizer (asan). This will put set the compiler to generate debug symbols while still compiling as release. This will then allow tsan to run on a relased build and provide feedback of problems.
+build:asan --copt=-fsanitize=address --copt=-fno-omit-frame-pointer --copt=-g --strip=never
+build:asan --linkopt=-fsanitize=address
+build:asan --platform_suffix=-asan
+build:asan --test_env ASAN_OPTIONS=detect_leaks=1:check_initialization_order=1:strict_init_order=1:detect_stack_use_after_return=1:detect_odr_violation=2:allow_user_segv_handler=1

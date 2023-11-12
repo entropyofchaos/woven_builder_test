@@ -1,0 +1,36 @@
+load("@rules_cc//cc:defs.bzl", "cc_library", "cc_binary")
+
+## tinyxml2 shared library defintion
+cc_library(
+    name = "tinyxml2",
+    srcs = ["tinyxml2.cpp"],
+    hdrs = ["tinyxml2.h"],
+    linkstatic = False,
+    visibility = ["//main:__pkg__"],
+)
+
+cc_binary(
+    name = "tinyxml2_shared",
+    deps = ["tinyxml2"],
+    data = ["tinyxml2.h"],
+    linkstatic = False,
+    linkshared = True,
+)
+
+## Tiny XML Unit Test Application
+cc_test(
+    name = "xmltest",
+    srcs = ["xmltest.cpp"],
+    deps = ["tinyxml2"],
+    data = glob(["resources/**"]),
+    linkstatic = False,
+)
+
+## Tiny XML Unit Test Application with injected memory leak
+cc_test(
+    name = "xmltest_memleak",
+    srcs = ["xmltest_memleak.cpp"],
+    deps = ["tinyxml2"],
+    data = glob(["resources/**"]),
+    linkstatic = False,
+)

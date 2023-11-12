@@ -1,0 +1,39 @@
+FROM ubuntu:22.04
+
+# Set DEBIAN_FRONTEND to noninteractive to avoid debconf warnings
+ENV DEBIAN_FRONTEND=noninteractive
+
+# Add essential tools to get compiler running as well as 
+# the applications needed to install bazel buildtool
+RUN apt-get update && apt-get install -y \
+    apt-utils \
+    build-essential \
+    git \
+    gcc \
+    mingw-w64 \
+    clang-12 \
+    libc++-12-dev \
+    libc++abi-12-dev\
+    libunwind-dev \
+    apt-transport-https \
+    curl \
+    gnupg
+    
+
+# Add the Bazel APT repository and GPG key
+RUN apt-get install apt-transport-https curl gnupg -y
+RUN curl -fsSL https://bazel.build/bazel-release.pub.gpg | gpg --dearmor >bazel-archive-keyring.gpg
+RUN mv bazel-archive-keyring.gpg /usr/share/keyrings
+RUN echo "deb [arch=amd64 signed-by=/usr/share/keyrings/bazel-archive-keyring.gpg] https://storage.googleapis.com/bazel-apt stable jdk1.8" | tee /etc/apt/sources.list.d/bazel.list
+
+# Install Bazel
+RUN apt-get update && apt-get install -y bazel
+
+# Clean up APT cache to reduce image size
+RUN apt-get clean
+
+# Verify Bazel installation
+RUN bazel --version
+
+# Set the working directory for the build environment
+WORKDIR /work
