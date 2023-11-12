@@ -44,19 +44,16 @@ jobs:
         run: |
             echo ls tinyxml2/bazel-testlogs/xmltest
             ls tinyxml2/bazel-testlogs/xmltest
-            echo ls bazel-out/k8-fastbuild/testlogs/xmltest
-            ls bazel-out/k8-fastbuild/testlogs/xmltest
-            echo cat bazel-out/k8-fastbuild/testlogs/xmltest/test.log
-            cat bazel-out/k8-fastbuild/testlogs/xmltest/test.log
             echo cat tinyxml2/bazel-testlogs/xmltest/test.log
             cat tinyxml2/bazel-testlogs/xmltest/test.log
       - name: Show Test Output
         run: cat tinyxml2/bazel-testlogs/xmltest/test.xml
+        continue-on-error: true
       - name: Upload Logs as Artifact
         uses: actions/upload-artifact@v3
         with:
           name: build-logs
-          path: bazel-testlogs/xmltest/test.xml
+          path: tinyxml2/bazel-testlogs/**
       - name: Check Bazel Test For Errors
         if: steps.runTest != 'success'
         run: exit 1
