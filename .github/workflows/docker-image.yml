@@ -11,9 +11,9 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Build the Docker Image
-        run: docker build . --file Dockerfile_GithubActions --tag test-env:latest
+        run: docker build . --file Dockerfile_GithubActions --tag test-env:$(date +%s)
       - name: Start Docker Container
-        run: docker run -d --name my-container -v $PWD/tinyxml2:/work test-env:latest
+        run: docker run -d --name my-container test-env:$(date +%s)
       - name: Run Test Config Inside Docker Container
         id: runTest
         run: docker exec my-container bazel test ${{ matrix.config }} //:xmltest
