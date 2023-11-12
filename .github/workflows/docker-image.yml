@@ -7,9 +7,13 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Build the Docker image
-        run: docker build . --file Dockerfile --tag my-image-name:$(date +%s)
+        run: docker build . --file Dockerfile --tag test-env:latest
+      - name: Check Docker Image
+        run: docker images my-image-name
       - name: Start Docker Container
-        run: docker run -d --name my-container -v $PWD/tinyxml2:/work my-image-name:$(date +%s)
+        run: docker run -d --name my-container -v $PWD/tinyxml2:/work test-env:latest
+      - name: Check Docker Container Logs
+        run: docker logs my-container
       - name: Run Test Config Inside Docker
         run: |
           docker exec my-container bazel test --config=clang12_config --config=asan //:xmltest
