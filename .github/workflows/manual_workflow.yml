@@ -39,10 +39,17 @@ jobs:
             pwd
             cd tinyxml2
             bazel test ${{ matrix.config }} //:xmltest
-            cat bazel-out/k8-fastbuild/testlogs/xmltest/test.log
         continue-on-error: true
       - name: Show Test Output
-        run: cat tinyxml2/bazel-testlogs/xmltest/test.log
+        run: |
+            echo ls tinyxml2/bazel-testlogs/xmltest
+            ls tinyxml2/bazel-testlogs/xmltest
+            echo ls bazel-out/k8-fastbuild/testlogs/xmltest
+            ls bazel-out/k8-fastbuild/testlogs/xmltest
+            echo cat bazel-out/k8-fastbuild/testlogs/xmltest/test.log
+            cat bazel-out/k8-fastbuild/testlogs/xmltest/test.log
+            echo cat tinyxml2/bazel-testlogs/xmltest/test.log
+            cat tinyxml2/bazel-testlogs/xmltest/test.log
       - name: Show Test Output
         run: cat tinyxml2/bazel-testlogs/xmltest/test.xml
       - name: Upload Logs as Artifact
