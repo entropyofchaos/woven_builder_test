@@ -15,11 +15,11 @@ jobs:
         run: docker exec my-container bazel test --config=clang12_config --config=asan //:xmltest
         continue-on-error: true
       - name: Show Test Output
-        run: docker exec my-container cat /work/bazel-testlogs/xmltest/test.log
+        run: docker exec my-container cat /work/bazel-testlogs/xmltest/test.xml
       - name: Copy Test Logs from Docker Container
-        run: docker cp my-container:/work/bazel-testlogs/xmltest/test.log $GITHUB_WORKSPACE/test.xml
+        run: docker cp my-container:/work/bazel-testlogs/xmltest/test.xml $GITHUB_WORKSPACE/test.xml
       - name: Show Test Output
-        run: cat test.log
+        run: cat test.xml
       - name: Upload Logs as Artifact
         uses: actions/upload-artifact@v2
         with:
@@ -33,11 +33,11 @@ jobs:
 
 
       # - name: Show Test Output
-      #   run: docker exec my-container cat /work/bazel-testlogs/xmltest_memleak/test.log
+      #   run: docker exec my-container cat /work/bazel-testlogs/xmltest_memleak/test.xml
       # - name: Copy Test Logs from Docker Container
-      #   run: docker cp my-container:/work/bazel-testlogs/xmltest_memleak/test.log $GITHUB_WORKSPACE/test.xml
+      #   run: docker cp my-container:/work/bazel-testlogs/xmltest_memleak/test.xml $GITHUB_WORKSPACE/test.xml
       # - name: Show Test Output
-      #   run: cat test.log
+      #   run: cat test.xml
       # - name: Upload Logs as Artifact
       #   uses: actions/upload-artifact@v2
       #   with:
