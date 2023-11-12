@@ -39,6 +39,7 @@ jobs:
             pwd
             cd tinyxml2
             bazel test ${{ matrix.config }} //:xmltest
+            cat bazel-out/k8-fastbuild/testlogs/xmltest/test.log
         continue-on-error: true
       - name: Show Test Output
         run: cat tinyxml2/bazel-testlogs/xmltest/test.log
