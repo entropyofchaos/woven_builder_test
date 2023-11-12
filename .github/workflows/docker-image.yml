@@ -15,19 +15,20 @@ jobs:
       - name: Check Docker Container Logs
         run: docker logs my-container
       - name: Run Test Config Inside Docker
-        run: |
-          docker exec my-container bazel test --config=clang12_config --config=asan //:xmltest
-          exit_status=$?
-          if [ $exit_status -ne 0 ]; then
-            echo "Bazel tests failed with exit code $exit_status"
-            exit 1
-          fi
+        run: docker exec my-container bazel test --config=clang12_config --config=asan //:xmltest
       - name: Show Test Output
         run: docker exec my-container cat /work/bazel-testlogs/xmltest_memleak/test.log
+      - name: Copy Test Logs from Docker Container
+        run: docker cp my-container:/work/bazel-testlogs/xmltest_memleak/test.log $GITHUB_WORKSPACE/test.xml
+      - name: Show Test Output
+        run: cat test.log
       - name: Upload Logs as Artifact
         uses: actions/upload-artifact@v2
         with:
           name: build-logs
-          path: /work/bazel-testlogs/xmltest_memleak/test.log
+          path: /work/bazel-testlogs/xmltest_memleak/test.xml
       - name: Stop and Remove Docker Container
         run: docker stop my-container && docker rm my-container
+      - name: Check Bazel Test Exit Code
+        run: exit ${{ job.status }}
+        if: ${{ job.status != 'success' }}
