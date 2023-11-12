@@ -1,17 +1,29 @@
 name: Docker Image CI
-on: [ push, pull_request, workflow_dispatch ]
+on: [push, pull_request, workflow_dispatch]
 
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v4
-    - name: Build the Docker image
-      run: docker build . --file Dockerfile --tag my-image-name:$(date +%s)
-    - name: Start Docker Container
-      run: docker run -it --rm -v $PWD/tinyxml2:/work my-image-name:$(date +%s)
-    - name: Run Test Config Inside Docker
-      run: bazel test --config=clang12_config --config=asan //:xmltest
-    - name: Show Test Output
-      run: ccat /work/bazel-testlogs/xmltest_memleak/test.log
-    
+      - uses: actions/checkout@v4
+      - name: Build the Docker image
+        run: docker build . --file Dockerfile --tag my-image-name:$(date +%s)
+      - name: Start Docker Container
+        run: docker run -d --name my-container -v $PWD/tinyxml2:/work my-image-name:$(date +%s)
+      - name: Run Test Config Inside Docker
+        run: |
+          docker exec my-container bazel test --config=clang12_config --config=asan //:xmltest
+          exit_status=$?
+          if [ $exit_status -ne 0 ]; then
+            echo "Bazel tests failed with exit code $exit_status"
+            exit 1
+          fi
+      - name: Show Test Output
+        run: docker exec my-container cat /work/bazel-testlogs/xmltest_memleak/test.log
+      - name: Upload Logs as Artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: build-logs
+          path: /work/bazel-testlogs/xmltest_memleak/test.log
+      - name: Stop and Remove Docker Container
+        run: docker stop my-container && docker rm my-container
