@@ -53,16 +53,18 @@
 .classpath
 .project
 eclipse-*bin/
-/bazel.iml
+
+# Ignore Bazel Files
+*/bazel.iml
 # Ignore all bazel-* symlinks. There is no full list since this can change
 # based on the name of the directory bazel is cloned into.
-/bazel-*
+*/bazel-*
 # Ignore outputs generated during Bazel bootstrapping.
-/output/
+*/output/
 # Ignore jekyll build output.
-/production
-/.sass-cache
+*/production
+*/.sass-cache
 # Bazelisk version file
-.bazelversion
+*/.bazelversion
 # User-specific .bazelrc
-user.bazelrc
+*/user.bazelrc

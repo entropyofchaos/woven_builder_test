@@ -7,9 +7,9 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Build the Docker image
-        run: docker build . --file Dockerfile --tag test-env:latest
+        run: docker build . --file Dockerfile_GithubActions --tag test-env:latest
       - name: Check Docker Image
-        run: docker images my-image-name
+        run: docker images
       - name: Start Docker Container
         run: docker run -d --name my-container -v $PWD/tinyxml2:/work test-env:latest
       - name: Check Docker Container Logs
