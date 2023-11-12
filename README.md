@@ -46,8 +46,8 @@ This repository contains an updated version of tinyxml2 that utilizes the Bazel 
      - You can also specify a toolchain to switch to Clang-12 or Mingw for cross-compilation (refer to commands below).
      - To build with Clang-12: `bazel build --config=clang12_config //...`
      - To build with Mingw: `bazel build --config=mingw_config //...`
-   - To build with ThreadSanitizer (tsan) or AddressSanitizer (asan) with either GCC or Clang:
-   *Note, this will not work with Mingw for Windows as it is not currently compatible out of the box. Additionally, note that asan and tsan cannot be run together as this isn't allowed by these libraries.*
+   - To build with ThreadSanitizer (tsan) or AddressSanitizer (asan) with either GCC or Clang:  
+     *Note, this will not work with Mingw for Windows as it is not currently compatible out of the box. Additionally, note that asan and tsan cannot be run together as this isn't allowed by these libraries.*
      - To build with asan using GCC: `bazel build --config=asan //...`
      - To build with tsan using GCC: `bazel build --config=tsan //...`
      - To build with asan using Clang: `bazel build --config=clang12_config --config=asan //...`
@@ -61,7 +61,7 @@ This repository contains an updated version of tinyxml2 that utilizes the Bazel 
    - The actual test outputs can be found by running the `cat` command on the output log or XML file.
      - Command: `cat /work/bazel-testlogs/xmltest/test.log`
      - Command: `cat /work/bazel-testlogs/xmltest/test.xml`
-   - To run the test with the Clang, tsan or asan, append the `--config` flag(s) as described above in step 1. Example:
+   - To run the test with the Clang, tsan or asan, append the `--config` flag(s) as described above in Step 1. Example:
      - Command: `bazel test --config=clang12_config --config=asan //:xmltest`
 
    ### Memory Leak Test
@@ -92,16 +92,16 @@ The directory `bazel-bin` will contain the compiled outputs. Given the time cont
 **Executable Project:**
 - Folders:
   - Standard Test:
-  - `/work/bazel-bin/xmltest.runfiles/__main__/`
-  - `/work/bazel-bin/xmltest.runfiles/__main__/resources/`  (resources needed for testing)
-- Injected Memory Leak Test:
-  - `/work/bazel-bin/xmltest_memleak.runfiles/__main__/`
-  - `/work/bazel-bin/xmltest_memleak.runfiles/__main__/resources/`  (resources needed for testing)
-Files:
-- Standard Test:
-  - `xmltest`
-- Injected Memory Leak Test:
-  - `xmltest_memleak`
+    - `/work/bazel-bin/xmltest.runfiles/__main__/`
+    - `/work/bazel-bin/xmltest.runfiles/__main__/resources/`  (resources needed for testing)
+  - Injected Memory Leak Test:
+    - `/work/bazel-bin/xmltest_memleak.runfiles/__main__/`
+    - `/work/bazel-bin/xmltest_memleak.runfiles/__main__/resources/`  (resources needed for testing)
+- Files:
+  - Standard Test:
+    - `xmltest`
+  - Injected Memory Leak Test:
+    - `xmltest_memleak`
 
 ### GCC/Clang Test Outputs
 **Test Outputs:**
@@ -125,13 +125,13 @@ Files:
 **Executable Project:**
 - Folders:
   - Standard Test:
-  - `/work/bazel-bin/xmltest.exe.runfiles/__main__/`
-  - `/work/bazel-bin/xmltest.exe.runfiles/__main__/resources/`  (resources needed for testing)
-- Injected Memory Leak Test:
-  - `/work/bazel-bin/xmltest_memleak.exe.runfiles/__main__/`
-  - `/work/bazel-bin/xmltest_memleak.exe.runfiles/__main__/resources/`  (resources needed for testing)
-Files:
-- Standard Test:
-  - `xmltest.exe`
-- Injected Memory Leak Test:
-  - `xmltest_memleak.exe`
+    - `/work/bazel-bin/xmltest.exe.runfiles/__main__/`
+    - `/work/bazel-bin/xmltest.exe.runfiles/__main__/resources/`  (resources needed for testing)
+  - Injected Memory Leak Test:
+    - `/work/bazel-bin/xmltest_memleak.exe.runfiles/__main__/`
+    - `/work/bazel-bin/xmltest_memleak.exe.runfiles/__main__/resources/`  (resources needed for testing)
+- Files:
+  - Standard Test:
+    - `xmltest.exe`
+  - Injected Memory Leak Test:
+    - `xmltest_memleak.exe`
