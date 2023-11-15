@@ -6,8 +6,8 @@ jobs:
     runs-on: ubuntu-20.04
     strategy:
       matrix:
-        #config: [ "--config=clang12_config --config=asan", "--config=clang12_config --config=tsan", "--config=asan", "--config=tsan", "" ]
-        config: [ "--config=clang12_config" ]
+        # config: [ "--config=clang12_config --config=asan", "--config=clang12_config --config=tsan", "--config=asan", "--config=tsan", "" ]
+        config: [ "" ]
     steps:
       - uses: actions/checkout@v4
       - name: Build the Docker Image
@@ -18,19 +18,16 @@ jobs:
         id: runTest
         run: docker exec my-container bazel test ${{ matrix.config }} //:xmltest
         continue-on-error: true
-      - name: Show Test Output
+      - name: Show Test Log Output
         run: docker exec my-container cat /work/bazel-testlogs/xmltest/test.log
-      - name: Show Test Output
+      - name: Show Test XML Output
         run: docker exec my-container cat /work/bazel-testlogs/xmltest/test.xml
       - name: Copy Test Logs from Docker Container
-        run: docker cp my-container:/work/bazel-testlogs/xmltest/test.log $GITHUB_WORKSPACE/test.log
-      - name: Copy Test Logs from Docker Container
-        run: docker cp my-container:/work/bazel-testlogs/xmltest/test.xml $GITHUB_WORKSPACE/test.xml
-      - name: Show Test Output
-        run: cat test.log
-      - name: Show Test Output
-        run: cat test.xml
-      - name: Upload Logs as Artifact
+        run: |
+          docker cp my-container:/work/bazel-testlogs/xmltest/test.log $GITHUB_WORKSPACE/test.log
+          docker cp my-container:/work/bazel-testlogs/xmltest/test.xml $GITHUB_WORKSPACE/test.xml
+        continue-on-error: true
+      - name: Upload Logs as an Artifact
         uses: actions/upload-artifact@v3
         with:
           name: build-logs
@@ -40,21 +37,3 @@ jobs:
       - name: Check Bazel Test For Errors
         if: steps.runTest != 'success'
         run: exit 1
-
-
-      # - name: Show Test Output
-      #   run: docker exec my-container cat /work/bazel-testlogs/xmltest_memleak/test.log
-      # - name: Copy Test Logs from Docker Container
-      #   run: docker cp my-container:/work/bazel-testlogs/xmltest_memleak/test.log $GITHUB_WORKSPACE/test.log
-      # - name: Show Test Output
-      #   run: cat test.log
-      # - name: Upload Logs as Artifact
-      #   uses: actions/upload-artifact@v2
-      #   with:
-      #     name: build-logs
-      #     path: /work/bazel-testlogs/xmltest_memleak/test.log
-      # - name: Stop and Remove Docker Container
-      #   run: docker stop my-container && docker rm my-container
-      # - name: Check Bazel Test For Errors
-      #   if: steps.runTest != 'success'
-      #   run: exit 1

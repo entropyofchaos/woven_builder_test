@@ -39,5 +39,6 @@ WORKDIR /work
 # Copy the tinyxml2 folder from the host to the container
 COPY tinyxml2 /work
 
-# Set the container to run 'sleep' indefinitely
+# Set the container to run 'sleep' indefinitely so the container doesn't exit and we can
+# GitHub run commands on the container.
 CMD ["sleep", "infinity"]

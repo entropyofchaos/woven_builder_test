@@ -7,10 +7,10 @@ jobs:
     strategy:
       matrix:
         #config: [ "--config=clang12_config --config=asan", "--config=clang12_config --config=tsan", "--config=asan", "--config=tsan", "" ]
-        config: [ "--config=clang12_config" ]
+        config: [ "" ]
     steps:
       - uses: actions/checkout@v4
-      - name: Install essential tools and Bazel
+      - name: Install Essential Tools and Bazel
         run: |
             sudo apt-get update
             sudo apt-get install -y \
@@ -50,8 +50,8 @@ jobs:
             ls tinyxml2/bazel-testlogs/xmltest
             echo cat tinyxml2/bazel-testlogs/xmltest/test.log
             cat tinyxml2/bazel-testlogs/xmltest/test.log
-      - name: Show Test Output
-        run: cat tinyxml2/bazel-testlogs/xmltest/test.xml
+            echo cat tinyxml2/bazel-testlogs/xmltest/test.xml
+            cat tinyxml2/bazel-testlogs/xmltest/test.xml
         continue-on-error: true
       - name: Upload Logs as Artifact
         uses: actions/upload-artifact@v3
