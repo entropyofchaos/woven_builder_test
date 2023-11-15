@@ -49,17 +49,18 @@ jobs:
             echo
             pwd
             ls
-            cd tinyxml2
             echo cd tinyxml2
-            ls tinyxml2
-            echo ls tinyxml2/bazel-testlogs
-            ls tinyxml2/bazel-testlogs
-            echo ls tinyxml2/bazel-testlogs/xmltest
-            ls tinyxml2/bazel-testlogs/xmltest
-            echo cat tinyxml2/bazel-testlogs/xmltest/test.log
-            cat tinyxml2/bazel-testlogs/xmltest/test.log
-            echo cat tinyxml2/bazel-testlogs/xmltest/test.xml
-            cat tinyxml2/bazel-testlogs/xmltest/test.xml
+            cd tinyxml2
+            echo ls
+            ls
+            echo ls bazel-testlogs
+            ls bazel-testlogs
+            echo ls bazel-testlogs/xmltest
+            ls bazel-testlogs/xmltest
+            echo cat bazel-testlogs/xmltest/test.log
+            cat bazel-testlogs/xmltest/test.log
+            echo cat bazel-testlogs/xmltest/test.xml
+            cat bazel-testlogs/xmltest/test.xml
         continue-on-error: true
       - name: Upload Logs as Artifact
         uses: actions/upload-artifact@v3
