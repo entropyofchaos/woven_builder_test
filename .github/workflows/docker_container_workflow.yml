@@ -6,8 +6,7 @@ jobs:
     runs-on: ubuntu-20.04
     strategy:
       matrix:
-        # config: [ "--config=clang12_config --config=asan", "--config=clang12_config --config=tsan", "--config=asan", "--config=tsan", "" ]
-        config: [ "" ]
+        config: [ "--config=clang12_config --config=asan", "--config=clang12_config --config=tsan", "--config=asan", "--config=tsan", "" ]
     steps:
       - uses: actions/checkout@v4
       - name: Build the Docker Image

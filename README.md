@@ -10,10 +10,14 @@ This repository contains an updated version of tinyxml2 that utilizes the Bazel 
 6. Added AddressSanitizer support.
 7. Added ThreadSanitizer support.
 8. Created a test file (`xmltest_memleak.cpp`) with an injected memory leak to confirm AddressSanitizer functionality (refer to note in Compile and Test Instructions - Step 2 - Memory Leak Test).
+9. Creating a CI Pipeline in the form of a Github Actions file
 
 ## Files Added:
 - Dockerfile
+- Dockerfile_GithubActions
 - README.md (this file)
+- .gitignore
+- ./github/workflows/docker_container_workflow.yml
 - tinyxml2/WORKSPACE.bazel
 - tinyxml2/.bazelrc
 - tinyxml2/toolchain/BUILD.bazel
@@ -30,7 +34,7 @@ This repository contains an updated version of tinyxml2 that utilizes the Bazel 
 4. Start the Docker container.
    - Command: `docker run -it --rm -v $PWD/tinyxml2:/work test-env`
    - This command may need to be run with `sudo` depending on your environment.
-   - This command will setup the docker contianer allowing for terminal interaction from the user within the docker container. Additionally this will mount the tinyxml2 directory to a working directory within the docker container such that compilation and excution can be performed.
+   - This command will set up the docker contianer allowing for terminal interaction from the user within the docker container. Additionally, this will mount the tinyxml2 directory to a working directory within the docker container such that compilation and excution can be performed.
 5. To exit the Docker container, run the command `exit`.
 6. To re-enter the existing Docker container, repeat step 4.
 7. To remove the Docker image when finished, run the following command:
@@ -65,7 +69,7 @@ This repository contains an updated version of tinyxml2 that utilizes the Bazel 
      - Command: `bazel test --config=clang12_config --config=asan //:xmltest`
 
    ### Memory Leak Test
-   *Note that since there are no detectible memory leaks in tinyxml2's test program and since tinyxml2 is not threaded, no errors will be reported. However, I did create a modified version of tinyxml2/xmltest.cpp called tinyxml2/xmltest_memleak.cpp. This version modifiesthe XMLTest function to malloc some memory which is never deleted every time the test function is called which will cause errors to show so we can see asans is working. I did not however create a threading bug as adding multithreading seemed considerably beyond the scope fo this exercise.*
+   *Note that since there are no detectible memory leaks in tinyxml2's test program and since tinyxml2 is not threaded, no errors will be reported. However, I did create a modified version of tinyxml2/xmltest.cpp called tinyxml2/xmltest_memleak.cpp. This version modifiesthe XMLTest function to malloc some memory which is never deleted every time the test function is called which will cause errors to show so we can see asans is working. I did not however create a threading bug as adding multithreading seemed considerably beyond the scope of this exercise.*
    - Run the test file with a memory leak with asan.
      - Command: `bazel test --config=asan //:xmltest_memleak`
    - This time there will be an error output as leaks are detected. Bazel will give advice to check the log file for the details of the error.
@@ -79,7 +83,7 @@ This repository contains an updated version of tinyxml2 that utilizes the Bazel 
    - Command: `bazel clean`
 
 ## Expected Outputs
-The directory `bazel-bin` will contain the compiled outputs. Given the time contraints of this challenge, I decided not to allocate time to learning the file management aspects of the bazel build system so instead I will just list how to find the approprate outputs of each build. Also, I could not figure out why when using a toolchain, bazel is doing static compilation of the library which is why I forced a shared library output target. Based on the documentation, it looks like telling it to not link statically should cause dynamic linking, but bazel appears to be ignore this when I use a toolchain.
+The directory `bazel-bin` will contain the compiled outputs. Given the time contraints of this challenge, I decided not to allocate time to learning the file management aspects of the bazel build system so instead I will just list how to find the approprate outputs of each build. Also, I could not figure out why when using a toolchain, bazel is doing static compilation of the library which is why I forced a shared library output target. Based on the documentation, it looks like telling it to not link statically should cause dynamic linking, but bazel appears to ignore this when I use a toolchain.
 
 ### GCC/Clang Build Outputs
 **Library Project:**
@@ -135,3 +139,12 @@ The directory `bazel-bin` will contain the compiled outputs. Given the time cont
     - `xmltest.exe`
   - Injected Memory Leak Test:
     - `xmltest_memleak.exe`
+
+## CI Pipeline Configuration Details (Github Actions)
+For this project, I created a Github Actions CI pipeline `.github\workflows\docker_container_workflow.yml` for the primary Linux configurations implemented. This includes both using gcc and clang as well as with and without tsan and asan. These configurations are run using the matrix strategy such that every time the pipeline is executed, every variation of the build is compiled, and the tests are run for complete coverage. I looked at it from the perspective that in a real build system, if you were compiling for multiple platforms, something similar would be expected to be done. 
+
+Currently, the CI Pipeline is setup to only run the test suite provided with tinyxml2 and does not create an artifact for the binaries. The reason for this is because github counts that against my monthly allocated space for a free account and I wanted to make sure I avoided going over Github's free allocated budget. I do however package the test log outputs to show the ability to create an artifact in the build system.
+
+Additionally, I created a slightly modified version of my Dockerfile called `Dockerfile_GithubActions` for running on GitHub. Essentially, I updated the Dockerfile to not automatically exit so that the CI pipeline could call different commands on different steps for better output granularity. 
+
+Lastly, as mentioned in my emails, I did run into an issue with tinyxml2's test executable causing a segmentation fault while executing on Github's servers. I thoroughly tested locally using both my local Linux Mint virtual machine and well as in docker container I have provided running on my virtual machine. I could not reproduce this issue locally. I tried debugging this for several hours using an array of configurations with and without docker and continued to run into the same problem on GitHub's runner. From your team's feedback, it does seem that you have also seen similar behavior before with this library and it seems to be an internal problem with the library itself. The stack trace also seems to point to something similar as well.
