@@ -33,12 +33,22 @@ jobs:
             
             sudo apt-get update
             sudo apt-get install -y bazel
-      - name: Run Test
+    #   - name: Run Test Directly Without Bazel In Debug
+    #     id: runTest
+    #     run: |
+    #         cd tinyxml2
+    #         bazel build --compilation_mode=dbg --copt=-g --config=asan //:xmltest
+    #         echo cd bazel-bin/xmltest.runfiles/__main__/
+    #         cd bazel-bin/xmltest.runfiles/__main__/
+    #         echo ./xmltest
+    #         ./xmltest
+    #     continue-on-error: true
+      - name: Run Test With Bazel
         id: runTest
         run: |
-            pwd
-            cd $GITHUB_WORKSPACE/tinyxml2
-            bazel build --compilation_mode=dbg --copt=-g --config=asan //:xmltest
+            echo cd tinyxml2
+            cd tinyxml2
+            bazel test --config=asan //:xmltest
             echo cd bazel-bin/xmltest.runfiles/__main__/
             cd bazel-bin/xmltest.runfiles/__main__/
             echo ./xmltest
@@ -46,21 +56,10 @@ jobs:
         continue-on-error: true
       - name: Show Test Output
         run: |
-            echo
-            pwd
-            ls
-            echo cd tinyxml2
-            cd tinyxml2
-            echo ls
-            ls
-            echo ls bazel-testlogs
-            ls bazel-testlogs
-            echo ls bazel-testlogs/xmltest
-            ls bazel-testlogs/xmltest
-            echo cat bazel-testlogs/xmltest/test.log
-            cat bazel-testlogs/xmltest/test.log
-            echo cat bazel-testlogs/xmltest/test.xml
-            cat bazel-testlogs/xmltest/test.xml
+            echo cat tinyxml2/bazel-testlogs/xmltest/test.log
+            cat tinyxml2/bazel-testlogs/xmltest/test.log
+            echo cat tinyxml2/bazel-testlogs/xmltest/test.xml
+            cat tinyxml2/bazel-testlogs/xmltest/test.xml
         continue-on-error: true
       - name: Upload Logs as Artifact
         uses: actions/upload-artifact@v3
