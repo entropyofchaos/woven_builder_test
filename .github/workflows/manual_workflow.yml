@@ -46,6 +46,8 @@ jobs:
         continue-on-error: true
       - name: Show Test Output
         run: |
+            echo ls tinyxml2/bazel-testlogs/
+            ls tinyxml2/bazel-testlogs/
             echo ls tinyxml2/bazel-testlogs/xmltest
             ls tinyxml2/bazel-testlogs/xmltest
             echo cat tinyxml2/bazel-testlogs/xmltest/test.log
